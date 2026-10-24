@@ -1,0 +1,229 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#10121b">
+  <meta name="color-scheme" content="dark">
+  <meta name="description" content="Descubra filmes e séries que combinam com seu humor e seus gostos.">
+
+  <!-- Só carrega scripts e estilos deste site, imagens e dados do TMDB. O resto é bloqueado. -->
+  <meta http-equiv="Content-Security-Policy"
+        content="default-src 'none'; script-src 'self'; style-src 'self'; img-src https://image.tmdb.org; connect-src https://api.themoviedb.org; base-uri 'none'; form-action 'none'; object-src 'none'">
+  <meta name="referrer" content="no-referrer">
+
+  <title>BoraVer — descubra o que assistir</title>
+
+  <link rel="preconnect" href="https://api.themoviedb.org">
+  <link rel="preconnect" href="https://image.tmdb.org">
+  <link rel="stylesheet" href="style.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <header class="topo">
+    <a class="logo" href="./" aria-label="BoraVer, início">
+      <span class="logo__icone" aria-hidden="true">▶</span> Bora<span>Ver</span>
+    </a>
+
+    <p class="topo__selo">
+      <span class="status__ponto" aria-hidden="true"></span>
+      Seu próximo favorito começa aqui
+    </p>
+  </header>
+
+  <main class="conteudo">
+    <noscript>
+      <p class="status">O BoraVer precisa de JavaScript para funcionar. Ative-o no navegador e recarregue a página.</p>
+    </noscript>
+
+    <section class="intro">
+      <div class="intro__etiqueta">
+        <span aria-hidden="true">✦</span> Menos tempo escolhendo, mais tempo assistindo
+      </div>
+
+      <h1>Tem uma história<br><span>perfeita pro seu momento.</span></h1>
+
+      <p class="intro__sub">
+        Conte como você está, descreva o que quer ver ou explore novas histórias.
+        A gente te ajuda a encontrar.
+      </p>
+    </section>
+
+    <div class="tipo-conteudo" role="group" aria-label="Tipo de conteúdo">
+      <button class="tipo-conteudo__botao tipo-conteudo__botao--ativo"
+        type="button" data-tipo="movie" aria-pressed="true">
+        <span aria-hidden="true">🎬</span> Filmes
+      </button>
+
+      <button class="tipo-conteudo__botao"
+        type="button" data-tipo="tv" aria-pressed="false">
+        <span aria-hidden="true">📺</span> Séries
+      </button>
+    </div>
+
+    <div class="abas" role="tablist" aria-label="Formas de descobrir conteúdo">
+      <button class="aba aba--ativa" id="aba-humor" type="button" role="tab"
+        data-aba="humor" aria-selected="true" aria-controls="painel-humor">
+        <span aria-hidden="true">✦</span> Meu momento
+      </button>
+
+      <button class="aba" id="aba-escrever" type="button" role="tab" tabindex="-1"
+        data-aba="escrever" aria-selected="false" aria-controls="painel-escrever">
+        <span aria-hidden="true">✎</span> Descrever
+      </button>
+
+      <button class="aba" id="aba-generos" type="button" role="tab" tabindex="-1"
+        data-aba="generos" aria-selected="false" aria-controls="painel-generos">
+        <span aria-hidden="true">▦</span> Gêneros
+      </button>
+
+      <button class="aba" id="aba-busca" type="button" role="tab" tabindex="-1"
+        data-aba="busca" aria-selected="false" aria-controls="painel-busca">
+        <span aria-hidden="true">⌕</span> Buscar
+      </button>
+    </div>
+
+    <!-- Meu momento -->
+    <section class="painel" id="painel-humor" role="tabpanel" aria-labelledby="aba-humor">
+      <div class="painel__cabecalho">
+        <span class="passo">01 / Personalize</span>
+        <h2>O que combina com você hoje?</h2>
+        <p>Não precisa saber o nome. Só escolha o clima.</p>
+      </div>
+
+      <div class="conversa" id="conversa" aria-live="polite"></div>
+      <div class="opcoes" id="opcoes"></div>
+
+      <div class="acoes">
+        <button class="btn btn--sec" id="reiniciar" type="button">↺ Começar de novo</button>
+      </div>
+
+      <div class="status" id="status-humor" role="status" aria-live="polite"></div>
+      <div class="grade" id="resultados-humor"></div>
+
+      <div class="acoes">
+        <button class="btn btn--sec" id="mais-humor" type="button" hidden></button>
+      </div>
+    </section>
+
+    <!-- Descrever -->
+    <section class="painel" id="painel-escrever" role="tabpanel" aria-labelledby="aba-escrever" hidden>
+      <div class="painel__cabecalho">
+        <span class="passo">02 / Conte pra gente</span>
+        <h2>Descreva o que está imaginando</h2>
+        <p>
+          Vale uma sensação, uma combinação de gêneros
+          ou até “algo parecido com…”.
+        </p>
+      </div>
+
+      <form class="busca busca--texto" id="form-escrever">
+        <label class="campo__rotulo" for="campo-escrever">O que você quer assistir?</label>
+
+        <textarea id="campo-escrever" rows="3" maxlength="400" autocomplete="off" required
+          placeholder="Ex.: um suspense inteligente, com reviravolta e sem muito terror..."></textarea>
+
+        <div class="campo__rodape">
+          <span>Você pode escrever do seu jeito.</span>
+          <span id="contador-texto">0/400</span>
+        </div>
+
+        <button class="btn" type="submit">
+          Encontrar opções <span aria-hidden="true">↗</span>
+        </button>
+      </form>
+
+      <div class="opcoes" id="exemplos"></div>
+      <div class="opcoes" id="rumos-escrever"></div>
+
+      <div class="status" id="status-escrever" role="status" aria-live="polite"></div>
+      <div class="grade" id="resultados-escrever"></div>
+
+      <div class="acoes">
+        <button class="btn btn--sec" id="mais-escrever" type="button" hidden></button>
+      </div>
+    </section>
+
+    <!-- Gêneros -->
+    <section class="painel" id="painel-generos" role="tabpanel" aria-labelledby="aba-generos" hidden>
+      <div class="painel__cabecalho">
+        <span class="passo">03 / Explore</span>
+        <h2>Hoje você está a fim de quê?</h2>
+        <p>Escolha um ou mais gêneros para montar sua seleção.</p>
+      </div>
+
+      <div class="opcoes generos" id="lista-generos" aria-label="Gêneros disponíveis"></div>
+
+      <div class="filtros">
+        <label class="check-filtro">
+          <input type="checkbox" id="genero-bem-avaliados" checked>
+          Priorizar conteúdos bem avaliados
+        </label>
+
+        <button class="btn" id="buscar-generos" type="button">
+          Explorar seleção <span aria-hidden="true">↗</span>
+        </button>
+      </div>
+
+      <div class="status" id="status-generos" role="status" aria-live="polite"></div>
+      <div class="grade" id="resultados-generos"></div>
+
+      <div class="acoes">
+        <button class="btn btn--sec" id="mais-generos" type="button" hidden></button>
+      </div>
+    </section>
+
+    <!-- Buscar -->
+    <section class="painel" id="painel-busca" role="tabpanel" aria-labelledby="aba-busca" hidden>
+      <div class="painel__cabecalho">
+        <span class="passo">04 / Você escolhe</span>
+        <h2>Já tem algo em mente?</h2>
+        <p>Pesquise por título ou parte do nome.</p>
+      </div>
+
+      <form class="busca" id="form-busca">
+        <label class="visualmente-oculto" for="campo-busca">Nome do filme ou série</label>
+
+        <input id="campo-busca" type="search" autocomplete="off" required
+          placeholder="Ex.: Interestelar, Breaking Bad...">
+
+        <button class="btn" type="submit">
+          Buscar <span aria-hidden="true">⌕</span>
+        </button>
+      </form>
+
+      <div class="status" id="status-busca" role="status" aria-live="polite"></div>
+      <div class="grade" id="resultados-busca"></div>
+
+      <div class="acoes">
+        <button class="btn btn--sec" id="mais-busca" type="button" hidden></button>
+      </div>
+    </section>
+
+    <section class="dica">
+      <div class="dica__icone" aria-hidden="true">✦</div>
+      <div>
+        <strong>Uma descoberta leva a outra.</strong>
+        <p>
+          Explore sem pressa. Seu próximo favorito pode estar fora
+          da sua lista de sempre.
+        </p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="rodape">
+    <a class="logo logo--rodape" href="./">Bora<span>Ver</span></a>
+    <p>Feito para ajudar você a escolher melhor o que assistir.</p>
+
+    <p class="credito">
+      Este produto usa a API do TMDB, mas não é endossado nem certificado pelo TMDB.
+    </p>
+
+    <a class="tmdb-link" href="https://www.themoviedb.org/"
+      target="_blank" rel="noopener noreferrer">
+      Dados de filmes e séries por TMDB ↗
+    </a>
+  </footer>
+</body>
+</html>
